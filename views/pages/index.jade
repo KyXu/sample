@@ -1,5 +1,4 @@
 extend ../layout
-
 block content
   .container
     .row
@@ -9,6 +8,6 @@ block content
             a(href="/movie/#{item._id}")
               img(src="#{item.poster}", alt="#{item.title}")
             .caption
-              h3 #{item.stitle}
+              h3 #{item.title}
               p: a.btn.btn-primary(href="/movie/#{item._id}", role="button")
                 trailer
