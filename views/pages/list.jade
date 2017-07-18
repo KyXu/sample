@@ -1,4 +1,4 @@
-extend ../layout
+extends ../layout
 
 block content
   .container
@@ -10,7 +10,7 @@ block content
             th Director
             th Country
             th Year
-            //-th Updated time
+            th Updated time
             th View
             th Update
             th Delete
@@ -21,7 +21,7 @@ block content
                 td #{item.director}
                 td #{item.country}
                 td #{item.year}
-                //-td #{moment(item.meta.createAt).format('MM/DD/YYYY')}
+                td #{moment(item.meta.updateAt).format('MM/DD/YYYY')}
                 td: a(target="_blank", href="../movie/#{item._id}") View
                 td: a(target="_blank", href="../admin/update/#{item._id}") Update
                 td

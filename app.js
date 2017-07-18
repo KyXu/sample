@@ -1,66 +1,49 @@
 var express = require('express')
-var path = require('path')
-var serveStatic = require('serve-static')
+//var path = require('path')
+var mongoose = require('mongoose')
+var _ = require('underscore')
+//var serveStatic = require('serve-static')
 var port = process.env.PORT || 3000
-var app = express()
 var bodyParser = require('body-parser')
+var app = express()
+
+mongoose.connect('mongodb://localhost:27017/imovie')
+console.log('MongoDB connection success!');
+
+var Movie = require('./models/movie.js')
 
 app.set('views', './views/pages')
 app.set('view engine','jade')
 //app.use(serveStatic('node_modules'))
-app.use(require('body-parser').urlencoded({extended: true}))
+app.use(require('body-parser').urlencoded({ extended: true }))
+app.locals.moment = require('moment')
 app.listen(port)
 
-console.log('imooc started on port: ' + port)
+console.log('LWFlooring started on port: ' + port)
 
 //index page
 app.get('/',function(req, res) {
-  res.render('index',{
-    title:'tracking first page',
-    movies:[{
-      title:"Movie1",
-      _id:1,
-      poster:'http://www.lwflooring.com/images/florence-sj-%20(24)-u672875-fr.jpg?crc=4057721877'
-    },{
-      title:"Movie2",
-      _id:2,
-      poster:'http://www.lwflooring.com/images/florence-sj-%20(24)-u672875-fr2.jpg?crc=3922281833'
-    },{
-      title:"Movie3",
-      _id:3,
-      poster:'http://www.lwflooring.com/images/florence-sj-%20(24)-u672875-fr3.jpg?crc=4075626246'
-    },{
-      title:"Movie4",
-      _id:4,
-      poster:'http://www.lwflooring.com/images/florence-sj-%20(24)-u672875-fr3.jpg?crc=4075626246'
-    },{
-      title:"Movie5",
-      _id:5,
-      poster:'http://www.lwflooring.com/mages/florence-sj-%20(24)-u672875-fr4.jpg?crc=516667865'
-    },{
-      title:"Movie6",
-      _id:6,
-      poster:'http://www.lwflooring.com/venice.html'
-    }]
+  Movie.fetch(function(err,movies){
+    if(err){
+      console.log(err)
+    }
+    res.render('index',{
+      title:'tracking first page',
+      movies:movies
+    })
   })
 })
 //detail page
 app.get('/movie/:id',function(req, res) {
-  res.render('detail',{
-    title:'tracking detail page',
-    movie:{
-      director:'dddddd',
-      country:'America',
-      title:'venice',
-      year:'2014',
-      poster:'http://www.lwflooring.com/venice.html',
-      language:'English',
-      flash:'http://player.youku.com/player.php/sid/XNjA1Njc0NTUy/v.swf',
-      summary:'sadfsadfsafs'
-    }
+
+  var id = req.params.id
+  Movie.findById(id, function(err,movie){
+    res.render('detail',{
+      title:'tracking detail page' + movie.title,
+      movie: movie
+    })
   })
 })
-
 app.get('/admin/movie',function(req, res) {
   res.render('admin',{
     title:'admin page',
@@ -77,17 +60,67 @@ app.get('/admin/movie',function(req, res) {
   })
 })
 
+app.get('/admin/update/:id', function(req, res){
+  var id = req.params.id
+
+  if(id){
+    Movie.findById(id, function(err, movie){
+      res.render('admin',{
+        title:'Admin update page',
+        movie: movie
+      })
+    })
+  }
+})
+
+app.post('/admin/movie/new', function(req, res){
+  var id = req.body.movie._id
+  var movieObj = req.body.movie
+  var _movie
+
+  if (id !== 'undefined'){
+    Movie.findById(id, function(err, movie){
+      if(err){
+        console.log(err)
+      }
+
+      _movie = _.extend(movie, movieObj)
+      _movie.save(function(err, movie){
+        if(err){
+          console.log(err)
+        }
+        res.redirect('/movie/' + movie._id)
+      })
+    })
+  }
+  else{
+    _movie = new Movie({
+      director: movieObj.director,
+      title: movieObj.title,
+      country: movieObj.country,
+      language: movieObj.language,
+      year: movieObj.year,
+      poster: movieObj.poster,
+      summary: movieObj.summary,
+      flash: movieObj.flash
+    })
+    _movie.save(function(err, movie){
+      if(err){
+        console.log(err)
+      }
+      res.redirect('/movie/' + movie._id)
+    })
+  }
+})
+
 app.get('/admin/list',function(req, res) {
-  res.render('list',{
-    title:'list',
-    movies:[{
-      title:'venice',
-      _id: 1,
-      director: 'dddddd',
-      country: 'America',
-      year: 2014,
-      language:'English',
-      flash:'http://player.youku.com/player.php/sid/XNjA1Njc0NTUy/v.swf'
-    }]
+  Movie.fetch(function(err, movies){
+    if(err){
+      console.log(err)
+   }
+    res.render('list',{
+      title:'list',
+      movies:movies
+    })
   })
 })
