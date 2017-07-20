@@ -12,6 +12,7 @@ mongoose.connect('mongodb://localhost:27017/imovie')
 console.log('MongoDB connection success!');
 
 var Movie = require('./models/movie.js')
+var User = require('./models/user.js')
 
 app.set('views', './views/pages')
 app.set('view engine','jade')
@@ -34,17 +35,87 @@ app.get('/',function(req, res) {
     })
   })
 })
-//detail page
-app.get('/movie/:id',function(req, res) {
 
-  var id = req.params.id
-  Movie.findById(id, function(err, movie){
+//sign up
+app.post('/user/signup',function(req,res){
+  var _user = req.body.user
+  User.findOne({name:_user.name}, function(err,user){
+    if(err){
+      console.log(err)
+    }
+    if(user){
+      console.log('User exists!')
+      return res.redirect('/')
+    }
+    else {
+      var user = new User(_user)
+      user.save(function(err,user){
+        if(err){
+            console.log(err)
+        }
+      res.redirect('/admin/userlist')
+     })
+     }
+  })
+})
+//user sign in
+app.post('/user/signin', function(req,res){
+  var _user = req.body.user
+  var name = _user.name
+  var password = _user.password
+
+  User.findOne({name:name}, function(err, user){
+    if(err){
+      console.log(err)
+    }
+    if(!user){
+      console.log('User does not exist!')
+      return res.redirect('/')
+    }
+
+    user.comparePassword(password, function(err, isMatch){
+      if(err){
+        console.log(err)
+      }
+      if(isMatch){
+        console.log('Password is matched')
+        return res.redirect('/')
+      }
+      else{
+        console.log('Password is not matched')
+      }
+    })
+  })
+})
+
+//userlist
+app.get('/admin/userlist',function(req, res) {
+  User.fetch(function(err, users){
+    if(err){
+      console.log(err)
+   }
+    res.render('userlist',{
+      title:'user list',
+      users:users
+    })
+  })
+})
+//detail page
+app.get('/movie/:id',function(req, res){
+  //var id = req.params['id']
+  const movieId = req.params.id
+  Movie.findById(movieId, function(err, movie){
+    if(err){
+      console.log(err)
+    }
+
     res.render('detail',{
-      title:'tracking detail page  ' + movie.title,
+      title:movie.title+ '  tracking detail page  ',
       movie: movie
     })
   })
 })
+
 app.get('/admin/movie',function(req, res) {
   res.render('admin',{
     title:'admin page',
@@ -132,6 +203,7 @@ app.delete('/admin/list', function(req,res){
     Movie.remove({_id:id},function(err, movie){
       if(err){
         console.log(err)
+        res.json({success:0})
       }
       else{
         res.json({success:1})
