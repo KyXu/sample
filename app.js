@@ -18,6 +18,12 @@ app.set('views', './views/pages')
 app.set('view engine','jade')
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(require('body-parser').urlencoded({ extended: true }))
+var session = require('express-session')
+var cookieParser = require('cookie-parser')
+app.use(cookieParser())
+app.use(express.session({
+  secret: 'LWFlooring'
+}))
 app.locals.moment = require('moment')
 app.listen(port)
 
@@ -25,6 +31,8 @@ console.log('LWFlooring started on port: ' + port)
 
 //index page
 app.get('/',function(req, res) {
+  console.log('user in session: ')
+  console.log(req.session.user)
   Movie.fetch(function(err,movies){
     if(err){
       console.log(err)
@@ -79,6 +87,7 @@ app.post('/user/signin', function(req,res){
       }
       if(isMatch){
         console.log('Password is matched')
+        req.session.user = user
         return res.redirect('/')
       }
       else{
