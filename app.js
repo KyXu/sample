@@ -7,8 +7,9 @@ var serveStatic = require('serve-static')
 var port = process.env.PORT || 3000
 var bodyParser = require('body-parser')
 var app = express()
+var dbUrl = 'mongodb://localhost:27017/imovie'
 
-mongoose.connect('mongodb://localhost:27017/imovie')
+mongoose.connect(dbUrl)
 console.log('MongoDB connection success!');
 
 var Movie = require('./models/movie.js')
@@ -19,20 +20,33 @@ app.set('view engine','jade')
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(require('body-parser').urlencoded({ extended: true }))
 var session = require('express-session')
+var mongoStore = require('connect-mongo')(session)
 var cookieParser = require('cookie-parser')
 app.use(cookieParser())
-app.use(express.session({
-  secret: 'LWFlooring'
+app.use(session({
+  secret: 'LWFlooring',
+  store: new mongoStore({
+    url: dbUrl,
+    collection: 'sessions'
+  })
 }))
 app.locals.moment = require('moment')
 app.listen(port)
 
 console.log('LWFlooring started on port: ' + port)
-
+//pre handle user
+app.use(function(req, res, next){
+  var _user= req.session.user
+  if(_user) {
+    app.locals.user = _user
+  }
+  return next()
+})
 //index page
 app.get('/',function(req, res) {
   console.log('user in session: ')
   console.log(req.session.user)
+
   Movie.fetch(function(err,movies){
     if(err){
       console.log(err)
@@ -95,6 +109,12 @@ app.post('/user/signin', function(req,res){
       }
     })
   })
+})
+//logout
+app.get('/logout',function(req,res) {
+  delete req.session.user
+  delete app.locals.user
+  res.redirect('/')
 })
 
 //userlist
