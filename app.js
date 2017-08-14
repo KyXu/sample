@@ -12,7 +12,7 @@ mongoose.connect(dbUrl)
 console.log('MongoDB connection success!');
 
 
-app.set('views', './views/pages')
+app.set('views', './app/views/pages')
 app.set('view engine','jade')
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(require('body-parser').urlencoded({ extended: true }))

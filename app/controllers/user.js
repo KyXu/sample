@@ -1,6 +1,20 @@
 var User = require('../models/user.js')
 
 //sign up
+//userlist
+exports.showSignup = function(req, res) {
+
+    res.render('signup',{
+      title:'Sign Up Page'
+  })
+}
+exports.showSignin = function(req, res) {
+
+    res.render('signin',{
+      title:'Sign In Page'
+  })
+}
+
 exports.signup = function(req,res){
   var _user = req.body.user
   User.findOne({name:_user.name}, function(err,user){
@@ -9,15 +23,16 @@ exports.signup = function(req,res){
     }
     if(user){
       console.log('User exists!')
-      return res.redirect('/')
+      return res.redirect('/signin')
     }
+
     else {
       var user = new User(_user)
       user.save(function(err,user){
         if(err){
             console.log(err)
         }
-      res.redirect('/admin/userlist')
+      res.redirect('/')
      })
      }
   })
@@ -34,7 +49,7 @@ exports.signin = function(req,res){
     }
     if(!user){
       console.log('User does not exist!')
-      return res.redirect('/')
+      return res.redirect('/signup')
     }
 
     user.comparePassword(password, function(err, isMatch){
@@ -48,6 +63,7 @@ exports.signin = function(req,res){
       }
       else{
         console.log('Password is not matched')
+        return res.redirect('/signin')
       }
     })
   })
