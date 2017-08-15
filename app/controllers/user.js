@@ -77,13 +77,31 @@ exports.logout = function(req,res) {
 
 //userlist
 exports.list = function(req, res) {
-  User.fetch(function(err, users){
-    if(err){
-      console.log(err)
-   }
-    res.render('userlist',{
-      title:'user list',
-      users:users
+
+    User.fetch(function(err, users){
+      if(err){
+        console.log(err)
+     }
+      res.render('userlist',{
+        title:'user list',
+        users:users
+      })
     })
-  })
+}
+//midware for user
+exports.signinRequired = function(req, res, next) {
+    var user = req.session.user
+
+    if(!user) {
+      return res.redirect('/signin')
+    }
+    next()
+}
+exports.adminRequired = function(req, res, next) {
+    var user = req.session.user
+    console.log(req.session.user)
+    if(user.role <= 10) {
+      return res.redirect('/signin')
+    }
+    next()
 }
