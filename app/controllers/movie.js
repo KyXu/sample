@@ -1,4 +1,5 @@
 var Movie = require('../models/movie.js')
+var Comment = require('../models/comment.js')
 var _ = require('underscore')
 
 //detail page
@@ -7,13 +8,16 @@ exports.detail = function(req, res){
   //const movieId = req.params.id
 
     Movie.findById(id, function(err, movie){
-    if(err){
-      console.log(err)
-    }
-
-    res.render('detail',{
-      title:movie.title + '  tracking detail page  ',
-      movie: movie
+      Comment
+       .find({movie:id})
+       .populate('from','name')
+       .exec(function(err,comments){
+        console.log(comments)
+        res.render('detail',{
+          title:movie.title + '  tracking detail page  ',
+          movie: movie,
+          comments:comments
+        })
     })
   })
 }
