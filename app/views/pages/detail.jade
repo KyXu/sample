@@ -14,7 +14,7 @@ block content
               each item in comments
                 li.media
                   .pull-left
-                    a(href="#comments", data-cid="#{item._id}",data-tid="#{item.from._id}")
+                    a.comment(href="#comments", data-cid="#{item._id}", data-tid="#{item.from._id}")
                       img.media-object(src="", style = "width:64px; height: 64px;")
                   .media-body
                     h4.media-heading #{item.from.name}
@@ -26,7 +26,10 @@ block content
                             a.comment(href="#comments", data-cid="#{item._id}", data-tid="#{reply.from._id}")                             
                               img.media-object(src="", style = "width:64px; height: 64px;")
                           .media-body
-                            h4.media-heading #{reply.from.name}
+                            h4.media-heading 
+                              | #{reply.from.name}
+                              sapn.text-info &nbsp; reply &nbsp;
+                              | #{reply.to.name}:
                             p #{reply.content}
                   hr
             #comments
@@ -39,7 +42,7 @@ block content
                 if user
                   button.btn.btn-primary(type = 'submit') submit
                 else
-                  a.navbar-link(href="#", data-toggle="modal",data-target="signinModal") Log in before post comment
+                  a.navbar-link(href="#", data-toggle="modal",data-target="#signinModal") Log in before post comment
       .col-md-5
         dl.dl-horizontal
           dt Name

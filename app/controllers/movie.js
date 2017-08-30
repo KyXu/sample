@@ -1,5 +1,6 @@
 var Movie = require('../models/movie.js')
 var Comment = require('../models/comment.js')
+var Store = require('../models/store.js')
 var _ = require('underscore')
 
 //detail page
@@ -24,18 +25,12 @@ exports.detail = function(req, res){
 }
 
 exports.new = function(req, res) {
-  res.render('admin',{
-    title:'admin page',
-    movie:{
-      title: '',
-      director: '',
-      country: '',
-      year: '',
-      poster: '',
-      flash: '',
-      summary: '',
-      language: ''
-    }
+  Store.find({}, function(err,stores){
+    res.render('admin',{
+      title:'admin page',
+      stores:stores,
+      movie:{}
+    })
   })
 }
 
@@ -57,7 +52,7 @@ exports.save = function(req, res){
   var movieObj = req.body.movie
   var _movie
 
-  if (id !== 'undefined'){
+  if (id){
     Movie.findById(id, function(err, movie){
       if(err){
         console.log(err)
@@ -73,16 +68,7 @@ exports.save = function(req, res){
     })
   }
   else{
-    _movie = new Movie({
-      director: movieObj.director,
-      title: movieObj.title,
-      country: movieObj.country,
-      language: movieObj.language,
-      year: movieObj.year,
-      poster: movieObj.poster,
-      summary: movieObj.summary,
-      flash: movieObj.flash
-    })
+    _movie = new Movie(movieObj)
     _movie.save(function(err, movie){
       if(err){
         console.log(err)
