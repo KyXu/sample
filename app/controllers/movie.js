@@ -39,14 +39,16 @@ exports.update = function(req, res){
 
   if(id){
     Movie.findById(id, function(err, movie){
-      res.render('admin',{
-        title:'Admin update page',
-        movie: movie
+      Store.find({}, function(err,stores){
+        res.render('admin',{
+          title:'Admin update page',
+          movie: movie,
+          stores:stores
+        })
       })
     })
   }
 }
-
 exports.save = function(req, res){
   var id = req.body.movie._id
   var movieObj = req.body.movie
