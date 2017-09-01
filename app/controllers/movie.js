@@ -7,6 +7,11 @@ var _ = require('underscore')
 exports.detail = function(req, res){
   var id = req.params['id']
   //const movieId = req.params.id
+    Movie.update({_id: id}, {$inc: {pv: 1}}, function(err) {
+      if (err) {
+        console.log(err)
+      }
+    })
 
     Movie.findById(id, function(err, movie){
       Comment
@@ -71,11 +76,22 @@ exports.save = function(req, res){
   }
   else{
     _movie = new Movie(movieObj)
+
+    var storeId = movieObj.store
+
     _movie.save(function(err, movie){
       if(err){
         console.log(err)
       }
-      res.redirect('/movie/' + movie._id)
+      if(storeId){
+        Store.findById(storeId, function(err, store){
+          store.movies.push(movie._id)
+
+          store.save(function(err, store){
+                  res.redirect('/movie/' + movie._id)
+          })
+        })
+      }
     })
   }
 }

@@ -6,7 +6,7 @@ var serveStatic = require('serve-static')
 var port = process.env.PORT || 3000
 var bodyParser = require('body-parser')
 var app = express()
-var dbUrl = 'mongodb://localhost:27017/imovie'
+var dbUrl = 'mongodb://localhost:27017/LWsample'
 
 mongoose.connect(dbUrl)
 console.log('MongoDB connection success!');

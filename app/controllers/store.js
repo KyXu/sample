@@ -5,14 +5,12 @@ var _ = require('underscore')
 exports.new = function(req, res) {
   res.render('store_admin',{
     title:'store admin',
-    store:{
-      code: '',
-      name: ''
-    }
+    store:{}
   })
 }
 //admin post Customers info
 exports.save = function(req, res){
+  
   console.log(req.body.store)
   var _store = req.body.store
   var store = new Store(_store)
@@ -42,7 +40,7 @@ exports.del = function(req,res){
   var id = req.query.id
 
   if(id){
-    Movie.remove({_id:id},function(err, movie){
+    Store.remove({_id:id},function(err, movie){
       if(err){
         console.log(err)
         res.json({success:0})
