@@ -1,6 +1,6 @@
 var Customer = require('../models/customer.js')
 var _ = require('underscore')
-
+var mongoXlsx = require('mongo-xlsx')
 //admin new page
 exports.new = function(req, res) {
   res.render('customer_admin',{
@@ -50,4 +50,24 @@ exports.del = function(req,res){
       }
     })
   }
+}
+
+/* Read xlsx file without a model */
+/* The library will use the first row the key */
+
+
+exports.import = function(req, res) {
+    console.log('user in session: ')
+    console.log(req.session.user)
+    var model = null
+    var xlsx  = 'BP.xlsx'
+    mongoXlsx.xlsx2MongoData(xlsx, model, function(err, bps) {
+      console.log(bps)
+      Customer.save(function(err, customer){
+        if(err){
+          console.log(err)
+        }
+        res.redirect('/admin/customer/list')
+      })
+    })
 }

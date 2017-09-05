@@ -35,8 +35,7 @@ if ('development' === app.get('env')){
   app.locals.pretty = true
   mongoose.set('debug', true)
 }
-var formidable = require('formidable')
-var fs =require('fs-extra')    //File System-needed for renaming file etc
+
 require('./config/routes')(app)
 
 app.locals.moment = require('moment')
