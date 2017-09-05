@@ -28,6 +28,7 @@ exports.signup = function(req,res){
 
     else {
       var user = new User(_user)
+      user.role = 1
       user.save(function(err,user){
         if(err){
             console.log(err)

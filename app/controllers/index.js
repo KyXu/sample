@@ -1,33 +1,21 @@
 var Movie = require('../models/movie.js')
-var BP = require('../models/BP.js')
-var mongoXlsx = require('mongo-xlsx')
-/* Read xlsx file without a model */
-/* The library will use the first row the key */
-
+var Store = require('../models/store.js')
 
 //index page
 exports.index = function(req, res) {
     console.log('user in session: ')
     console.log(req.session.user)
-    var model = null
-    var xlsx  = 'BP.xlsx'
-    mongoXlsx.xlsx2MongoData(xlsx, model, function(err, bps) {
-      console.log(bps)
+
+    Store
+      .find({})
+      .populate({path: 'movies', options:{limit:5}})
+      .exec(function(err, stores){
+        if(err){
+          console.log(err)
+        }
       res.render('index',{
         title:'Customers list',
-        bps:bps[0]
+        stores:stores
       })
     })
-
-
-/*    BP.fetch(function(err, bps){
-      if(err){
-        console.log(err)
-     }
-     res.render('index',{
-       title:'Customers list',
-       bps:bps
-     })
-
-   })*/
 }

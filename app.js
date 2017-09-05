@@ -6,7 +6,7 @@ var serveStatic = require('serve-static')
 var port = process.env.PORT || 3000
 var bodyParser = require('body-parser')
 var app = express()
-var dbUrl = 'mongodb://localhost:27017/LWsample'
+var dbUrl = 'mongodb://localhost:27017/sample'
 
 mongoose.connect(dbUrl)
 console.log('MongoDB connection success!');
@@ -35,7 +35,8 @@ if ('development' === app.get('env')){
   app.locals.pretty = true
   mongoose.set('debug', true)
 }
-
+var formidable = require('formidable')
+var fs =require('fs-extra')    //File System-needed for renaming file etc
 require('./config/routes')(app)
 
 app.locals.moment = require('moment')

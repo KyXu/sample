@@ -2,7 +2,7 @@ var mongoose = require('mongoose')
 var Schema = mongoose.Schema
 var ObjectId = Schema.Types.ObjectId
 
-var BPSchema = new Schema({
+var CustomerSchema = new Schema({
   code: String,
   name: String,
   movies: {type:ObjectId, ref:'User'},
@@ -18,7 +18,7 @@ var BPSchema = new Schema({
   }
 })
 
-BPSchema.pre('save',function(next) {
+CustomerSchema.pre('save',function(next) {
   if(this.isNew){
     this.meta.createAt = this.meta.updateAt = Date.now()
   }
@@ -28,7 +28,7 @@ BPSchema.pre('save',function(next) {
   next()
 })
 
-BPSchema.statics = {
+CustomerSchema.statics = {
   fetch: function(cb) {
     return this
     .find({})
@@ -43,4 +43,4 @@ BPSchema.statics = {
   }
 }
 
-module.exports = BPSchema
+module.exports = CustomerSchema

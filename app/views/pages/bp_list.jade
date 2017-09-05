@@ -1,0 +1,15 @@
+extends ../layout
+block content
+  .container
+    .row(style="padding-bottom:50px;")
+      .panel.panel-default
+        .panel-heading
+          h3 Customers list
+        .panel-body
+        each bp in bps
+          .col-md-2
+            .caption
+              H3 #{bp.BP_Code}
+              H3 #{bp.BP_Name}
+              H3 #{bp.Slp}
+                p: a.btn.btn-primary(href="",role="button") View
