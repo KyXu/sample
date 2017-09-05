@@ -15,7 +15,7 @@ exports.index = function(req, res) {
       console.log(bps)
       res.render('index',{
         title:'Customers list',
-        bps:bps
+        bps:bps[0]
       })
     })
 
