@@ -3,9 +3,9 @@ var Schema = mongoose.Schema
 var ObjectId = Schema.Types.ObjectId
 
 var CustomerSchema = new Schema({
-  code: String,
-  name: String,
-  movies: {type:ObjectId, ref:'User'},
+  BP_code: String,
+  BP_name: String,
+  slp: String,
   meta: {
     createAt:{
       type: Date,

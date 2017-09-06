@@ -62,12 +62,16 @@ exports.import = function(req, res) {
     var model = null
     var xlsx  = 'BP.xlsx'
     mongoXlsx.xlsx2MongoData(xlsx, model, function(err, bps) {
-      console.log(bps)
-      Customer.save(function(err, customer){
+      console.log(bps[0])
+      cust = new Customer()
+      console.log(bps[0].BP_Code)
+      cust.code = bps[0].BP_Code
+      cust.save(function(err, cust){
         if(err){
           console.log(err)
         }
-        res.redirect('/admin/customer/list')
       })
-    })
+
+      })
+            res.redirect('/admin/customer/list')
 }
